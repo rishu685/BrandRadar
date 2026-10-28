@@ -4,8 +4,8 @@
 
 # BrandRadar
 
-> **Open-Source Generative Engine Optimization (GEO) & Answer Engine Optimization (AEO) Platform.**  
-> Monitor, audit, and maximize how ChatGPT, Perplexity, and Google Gemini cite and rank your brand.
+### Open-Source Generative Engine Optimization (GEO) & Answer Engine Optimization (AEO) Platform.
+**Monitor, audit, and maximize how ChatGPT, Perplexity, and Google Gemini cite and rank your brand.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
