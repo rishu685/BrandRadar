@@ -1,9 +1,11 @@
-# BrandRadar 📡
+<div align="center">
+
+<img src="public/brand-logo.png" alt="BrandRadar Symbol" width="110" height="110" />
+
+# BrandRadar
 
 > **Open-Source Generative Engine Optimization (GEO) & Answer Engine Optimization (AEO) Platform.**  
 > Monitor, audit, and maximize how ChatGPT, Perplexity, and Google Gemini cite and rank your brand.
-
-<div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
@@ -130,20 +132,6 @@ Showcase your generative engine visibility score on your project's GitHub README
 Result:  
 [![BrandRadar GEO Score](https://img.shields.io/badge/BrandRadar%20AEO%20Score-88%2F100-10B981?style=flat-square&logo=radar)](#)
 
----
-
-## 🗺️ Roadmap
-
-- [x] Remove Stripe & unlock 100% free unlimited scans
-- [x] Direct Google Gemini (`gemini-2.5-flash`) free tier integration
-- [x] Zero-Key Demo Sandbox Mode for instant evaluation
-- [x] Interactive `/llms.txt` Generator & Validator
-- [x] AI Crawler Robots.txt Auditor
-- [x] Actionable Schema.org (JSON-LD) GEO Playbook
-- [x] Modern, clean, full-width responsive dashboard
-- [ ] Automated weekly AI visibility email alerts
-- [ ] Perplexity & DeepSeek citation verification engine
-- [ ] Chrome Extension for 1-click on-page GEO audits
 
 ---
 

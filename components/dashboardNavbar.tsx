@@ -5,7 +5,7 @@ import { GaugeIcon, LogOutIcon, MenuIcon, MoonIcon, StarIcon } from 'lucide-reac
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { Logo } from '@/components/logo';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -166,6 +166,7 @@ export function DashboardNavbar({ user }: { user: DashboardUser }) {
               }
             >
               <Avatar className='size-9 border'>
+                <AvatarImage src='/brand-logo.png' alt='BrandRadar' />
                 <AvatarFallback className='bg-primary/10 text-xs font-bold text-primary'>
                   BR
                 </AvatarFallback>

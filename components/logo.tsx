@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ChartNoAxesCombined } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 type LogoProps = {
@@ -14,20 +14,20 @@ export function Logo({ className, href = '/', inverted = false }: LogoProps) {
       href={href}
       aria-label='BrandRadar home'
       className={cn(
-        'inline-flex items-center gap-2 text-lg font-bold tracking-tight',
+        'inline-flex items-center gap-2.5 text-lg font-bold tracking-tight group',
         inverted ? 'text-primary-foreground' : 'text-foreground',
         className,
       )}
     >
-      <span
-        className={cn(
-          'flex size-7 items-center justify-center rounded-md',
-          inverted
-            ? 'bg-primary-foreground text-primary'
-            : 'bg-primary text-primary-foreground',
-        )}
-      >
-        <ChartNoAxesCombined className='size-4' strokeWidth={2.5} />
+      <span className='relative flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-[7px] shadow-xs ring-1 ring-border/20 transition-transform duration-200 group-hover:scale-105'>
+        <Image
+          src='/brand-logo.png'
+          alt='BrandRadar symbol'
+          width={28}
+          height={28}
+          className='size-full object-cover'
+          priority
+        />
       </span>
       <span>
         Brand
