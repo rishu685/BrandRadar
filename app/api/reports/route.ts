@@ -1,12 +1,14 @@
-import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { reconcileTerminalReport } from '@/lib/reports';
 import type { ReportListItem, ReportListStatus } from '@/types/reports';
 
 export async function GET() {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
 
   const reportRows = await prisma.report.findMany({
     where: {

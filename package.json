@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "prebuild": "prisma generate",
     "trigger:dev": "npx trigger.dev@4.5.12 dev",
     "trigger:deploy": "npx trigger.dev@4.5.12 deploy"
@@ -48,6 +49,7 @@
     "eslint-config-next": "16.3.1",
     "prisma": "6.19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.12"
   }
 }

@@ -1,9 +1,8 @@
-import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { auth as triggerAuth } from '@trigger.dev/sdk';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 import { reconcileTerminalReport } from '@/lib/reports';
 import type { KeywordReport } from '@/lib/keyword-report';
 import type { ReportDetailResponse } from '@/types/reports';
@@ -16,7 +15,10 @@ type ReportRouteProps = {
 };
 
 export async function GET(_request: Request, { params }: ReportRouteProps) {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
 
   const reportId = reportIdSchema.safeParse((await params).id);
   if (!reportId.success) {

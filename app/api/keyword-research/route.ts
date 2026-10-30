@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { tasks } from '@trigger.dev/sdk';
-import { getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { ReportStatus } from '@/generated/prisma/client';
 import type { keywordResearchTask } from '@/trigger/keyword-research';
@@ -19,7 +18,10 @@ const keywordResearchInputSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
 
   const requestBody = await request.json().catch(() => null);
   const input = keywordResearchInputSchema.safeParse(requestBody);
