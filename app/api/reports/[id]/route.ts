@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma';
 import { getEffectiveUser } from '@/lib/auth';
 import { reconcileTerminalReport } from '@/lib/reports';
 import type { KeywordReport } from '@/lib/keyword-report';
-import type { ReportDetailResponse } from '@/types/reports';
+import type { ReportDetailResponse, ReportProvenance } from '@/types/reports';
 import type { VisibilityReportResult } from '@/types/search-visibility';
 
 const reportIdSchema = z.string().regex(/^[a-f\d]{24}$/i);
@@ -32,6 +32,7 @@ export async function GET(_request: Request, { params }: ReportRouteProps) {
       id: true,
       type: true,
       status: true,
+      provenance: true,
       keyword: true,
       language: true,
       country: true,
@@ -66,6 +67,7 @@ export async function GET(_request: Request, { params }: ReportRouteProps) {
       id: report.id,
       type: isKeywordReport ? 'keyword' : 'visibility',
       status,
+      provenance: parseReportProvenance(report.provenance),
       title: isKeywordReport
         ? report.keyword?.trim() || 'Untitled keyword report'
         : report.brand?.trim() ||
@@ -112,4 +114,11 @@ export async function GET(_request: Request, { params }: ReportRouteProps) {
   return NextResponse.json(response, {
     headers: { 'Cache-Control': 'private, no-store' },
   });
+}
+
+function parseReportProvenance(value: string | null | undefined): ReportProvenance {
+  if (value === 'LIVE') return 'LIVE';
+  if (value === 'AI_GENERATED') return 'AI_GENERATED';
+  if (value === 'DEMO') return 'DEMO';
+  return 'UNKNOWN';
 }

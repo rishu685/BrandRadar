@@ -2,11 +2,13 @@
 import Link from 'next/link';
 import {
   BarChart3Icon,
+  BotIcon,
   CheckCircle2Icon,
   CircleAlertIcon,
   EyeIcon,
   FileTextIcon,
   SearchIcon,
+  SparklesIcon,
 } from 'lucide-react';
 import { ReportsTableSkeleton } from '@/components/reports/reportsTableSkeleton';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +31,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { ReportListItem, ReportListStatus } from '@/types/reports';
+import type { ReportListItem, ReportListStatus, ReportProvenance } from '@/types/reports';
 
 type ReportsTableProps = {
   reports?: ReportListItem[];
@@ -223,7 +225,7 @@ function ReportRow({ report }: { report: ReportListItem }) {
         </span>
       </TableCell>
       <TableCell>
-        <ReportStatusBadge status={report.status} progress={report.progress} />
+        <ReportStatusBadge status={report.status} provenance={report.provenance} progress={report.progress} />
       </TableCell>
       <TableCell className='hidden text-muted-foreground sm:table-cell'>
         {formatReportDate(report.createdAt)}
@@ -247,18 +249,53 @@ function ReportRow({ report }: { report: ReportListItem }) {
   );
 }
 
-function ReportStatusBadge({
+export function ReportStatusBadge({
   status,
+  provenance,
   progress,
 }: {
   status: ReportListStatus;
+  provenance?: ReportProvenance;
   progress: number;
 }) {
   if (status === 'completed') {
+    if (provenance === 'LIVE') {
+      return (
+        <Badge className='rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs text-emerald-600 dark:text-emerald-400 tracking-normal normal-case'>
+          <CheckCircle2Icon className='size-3.5' />
+          Live Audit
+        </Badge>
+      );
+    }
+
+    if (provenance === 'AI_GENERATED') {
+      return (
+        <Badge className='rounded-full bg-indigo-500/10 px-2.5 py-1 text-xs text-indigo-600 dark:text-indigo-400 tracking-normal normal-case'>
+          <BotIcon className='size-3.5' />
+          AI Estimate
+        </Badge>
+      );
+    }
+
+    if (provenance === 'DEMO') {
+      return (
+        <Badge
+          variant='outline'
+          className='rounded-full border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-600 dark:text-amber-400 tracking-normal normal-case'
+        >
+          <SparklesIcon className='size-3.5' />
+          Demo
+        </Badge>
+      );
+    }
+
     return (
-      <Badge className='rounded-full bg-primary/10 px-2.5 py-1 text-xs text-primary tracking-normal normal-case'>
-        <CheckCircle2Icon />
-        Completed
+      <Badge
+        variant='outline'
+        className='rounded-full border-muted-foreground/30 bg-muted/40 px-2.5 py-1 text-xs text-muted-foreground tracking-normal normal-case'
+      >
+        <CircleAlertIcon className='size-3.5' />
+        Legacy
       </Badge>
     );
   }
@@ -269,7 +306,7 @@ function ReportStatusBadge({
         variant='destructive'
         className='rounded-full bg-destructive/10 px-2.5 py-1 text-xs tracking-normal normal-case'
       >
-        <CircleAlertIcon />
+        <CircleAlertIcon className='size-3.5' />
         Failed
       </Badge>
     );

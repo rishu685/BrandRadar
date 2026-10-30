@@ -6,8 +6,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeftIcon,
   BarChart3Icon,
+  BotIcon,
   CalendarIcon,
+  CheckCircle2Icon,
+  CircleAlertIcon,
   SearchIcon,
+  SparklesIcon,
 } from 'lucide-react';
 import { KeywordReportView } from '@/components/reports/keywordReportView';
 import { LiveReportProgress } from '@/components/reports/liveReportProgress';
@@ -16,7 +20,7 @@ import { LiveVisibilityProgress } from '@/components/ai-search-visibility/liveVi
 import { VisibilityResults } from '@/components/ai-search-visibility/visibilityResults';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import type { ReportDetailResponse } from '@/types/reports';
+import type { ReportDetailResponse, ReportProvenance } from '@/types/reports';
 
 const fetchReport = async (reportId: string): Promise<ReportDetailResponse> => {
   const response = await fetch(`/api/reports/${reportId}`);
@@ -113,6 +117,10 @@ export default function ReportPage() {
         </div>
       </div>
 
+      {report.status === 'completed' && (
+        <ReportProvenanceNotice provenance={report.provenance} />
+      )}
+
       {report.type === 'visibility' && report.status === 'failed' ? (
         <ReportFailed errorMessage={report.errorMessage} />
       ) : report.type === 'visibility' && report.status === 'completed' ? (
@@ -171,4 +179,62 @@ function formatReportDate(value: string) {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
+}
+
+export function ReportProvenanceNotice({ provenance }: { provenance?: ReportProvenance }) {
+  if (provenance === 'DEMO') {
+    return (
+      <div
+        role='alert'
+        className='flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-300'
+      >
+        <SparklesIcon className='mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400' />
+        <div className='flex flex-col gap-0.5'>
+          <p className='font-semibold'>Simulated Demo Report</p>
+          <p className='text-xs text-amber-700/90 dark:text-amber-400/90'>
+            This report was generated using simulated benchmark data and does not represent live search engine observations.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (provenance === 'AI_GENERATED') {
+    return (
+      <div className='flex items-start gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 text-sm text-indigo-900 dark:text-indigo-200'>
+        <BotIcon className='mt-0.5 size-5 shrink-0 text-indigo-600 dark:text-indigo-400' />
+        <div className='flex flex-col gap-0.5'>
+          <p className='font-semibold'>AI Model Estimation</p>
+          <p className='text-xs text-muted-foreground'>
+            This report was generated directly by AI model synthesis and does not represent independently collected live SERP observations.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (provenance === 'UNKNOWN') {
+    return (
+      <div className='flex items-start gap-3 rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground'>
+        <CircleAlertIcon className='mt-0.5 size-5 shrink-0 text-muted-foreground' />
+        <div className='flex flex-col gap-0.5'>
+          <p className='font-semibold text-foreground'>Legacy Report</p>
+          <p className='text-xs'>
+            This report was completed prior to provenance tracking. Execution provenance cannot be independently verified.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (provenance === 'LIVE') {
+    return (
+      <div className='flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-300'>
+        <CheckCircle2Icon className='size-4 shrink-0 text-emerald-600 dark:text-emerald-400' />
+        <span>Verified live search audit from external platform observations.</span>
+      </div>
+    );
+  }
+
+  return null;
 }
