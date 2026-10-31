@@ -1,5 +1,6 @@
 export type ReportListType = 'keyword' | 'visibility';
 export type ReportListStatus = 'processing' | 'completed' | 'failed';
+export type ReportProvenance = 'LIVE' | 'AI_GENERATED' | 'DEMO' | 'UNKNOWN';
 
 export type ReportListItem = {
   id: string;
@@ -7,6 +8,7 @@ export type ReportListItem = {
   description: string;
   type: ReportListType;
   status: ReportListStatus;
+  provenance: ReportProvenance;
   progress: number;
   createdAt: string;
   completedAt: string | null;

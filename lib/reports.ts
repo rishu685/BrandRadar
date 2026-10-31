@@ -2,6 +2,7 @@ import 'server-only';
 import { runs } from '@trigger.dev/sdk';
 import prisma from '@/lib/prisma';
 import type { ReportStatus, ReportType } from '@/generated/prisma/client';
+import { sanitizeScanErrorMessage } from '@/lib/scan-errors';
 
 type ProcessingReport = {
   id: string;
@@ -36,21 +37,44 @@ export async function reconcileTerminalReport<T extends ProcessingReport>(
     if (!failedRunStatuses.has(run.status)) return report;
 
     const failure = getRunFailure(run.status, run.error?.message, report.type);
-    const updatedReport = await prisma.report.update({
-      where: { id: report.id },
+
+    const updateResult = await prisma.report.updateMany({
+      where: {
+        id: report.id,
+        status: { in: ['PENDING', 'COLLECTING', 'ANALYZING'] },
+      },
       data: {
         status: 'FAILED',
         currentStep: failure.currentStep,
         errorMessage: failure.errorMessage,
-      },
-      select: {
-        status: true,
-        currentStep: true,
-        errorMessage: true,
+        result: null,
       },
     });
 
-    return { ...report, ...updatedReport };
+    if (updateResult.count === 0) {
+      // The report transitioned to a terminal status (e.g. COMPLETED) concurrently.
+      // Retrieve the latest fresh record to avoid returning a stale in-memory object.
+      const freshReport = await prisma.report.findUnique({
+        where: { id: report.id },
+        select: {
+          status: true,
+          currentStep: true,
+          errorMessage: true,
+          result: true,
+          completedAt: true,
+          progress: true,
+          provenance: true,
+        },
+      });
+      return freshReport ? ({ ...report, ...freshReport } as T) : report;
+    }
+
+    return {
+      ...report,
+      status: 'FAILED' as ReportStatus,
+      currentStep: failure.currentStep,
+      errorMessage: failure.errorMessage,
+    };
   } catch (error) {
     console.warn('Unable to reconcile report with Trigger.dev', {
       reportId: report.id,
@@ -84,6 +108,8 @@ function getRunFailure(
       reportType === 'KEYWORD'
         ? 'Keyword research failed'
         : 'AI visibility scan failed',
-    errorMessage: runError || `Trigger run ended with ${runStatus}`,
+    errorMessage: runError
+      ? sanitizeScanErrorMessage(runError)
+      : `Trigger run ended with ${runStatus}`,
   };
 }

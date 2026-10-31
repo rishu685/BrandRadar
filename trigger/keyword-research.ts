@@ -3,6 +3,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText, Output } from 'ai';
 import prisma from '@/lib/prisma';
 import { ReportStatus } from '@/generated/prisma/client';
+import { sanitizeScanErrorMessage } from '@/lib/scan-errors';
 import { getKeywordScoreLabel } from '@/lib/keyword-report';
 import { logger, metadata, schemaTask, wait } from '@trigger.dev/sdk';
 
@@ -287,6 +288,7 @@ export const keywordResearchTask = schemaTask({
         status: ReportStatus.COMPLETED,
         progress: 100,
         currentStep: 'Report ready',
+        provenance: 'LIVE',
         result: report,
         errorMessage: null,
         completedAt: new Date(),
@@ -314,7 +316,7 @@ export const keywordResearchTask = schemaTask({
     await markJobFailed(
       payload.jobId,
       'Keyword research failed',
-      error instanceof Error ? error.message : 'Keyword research failed',
+      sanitizeScanErrorMessage(error),
     );
   },
   onCancel: async ({ payload }) => {
@@ -647,6 +649,7 @@ async function markJobFailed(
       status: ReportStatus.FAILED,
       currentStep,
       errorMessage,
+      result: null,
     },
   });
 

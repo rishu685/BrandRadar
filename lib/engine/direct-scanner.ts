@@ -3,12 +3,11 @@ import { generateText, Output } from 'ai';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { ReportStatus, Prisma } from '@/generated/prisma/client';
-import {
-  generateDemoVisibilityReport,
-  generateDemoKeywordReport,
-} from './demo-data';
+import { sanitizeScanErrorMessage } from '@/lib/scan-errors';
 import type { VisibilityReportResult } from '@/types/search-visibility';
 import type { KeywordReport } from '@/lib/keyword-report';
+
+export { sanitizeScanErrorMessage } from '@/lib/scan-errors';
 
 const visibilityReportSchema = z.object({
   overallScore: z.number().int().min(0).max(100),
@@ -121,6 +120,16 @@ const keywordReportSchema = z.object({
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function isConfiguredApiKey(key: string | undefined): boolean {
+  if (!key) return false;
+  const trimmed = key.trim();
+  return (
+    trimmed.length > 0 &&
+    trimmed !== 'your_google_gemini_api_key' &&
+    !trimmed.includes('replace')
+  );
+}
+
 export async function runDirectVisibilityScan(
   jobId: string,
   website: string,
@@ -139,22 +148,36 @@ export async function runDirectVisibilityScan(
     });
 
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    let result: VisibilityReportResult;
 
-    if (apiKey && apiKey !== 'your_google_gemini_api_key' && !apiKey.includes('replace')) {
-      try {
-        const google = createGoogleGenerativeAI({ apiKey });
-        await sleep(600);
-        await prisma.report.update({
-          where: { id: jobId },
-          data: {
-            status: ReportStatus.ANALYZING,
-            progress: 60,
-            currentStep: 'Checking ChatGPT and Gemini responses',
-          },
-        });
+    if (!isConfiguredApiKey(apiKey)) {
+      await prisma.report.updateMany({
+        where: {
+          id: jobId,
+          status: { not: ReportStatus.COMPLETED },
+        },
+        data: {
+          status: ReportStatus.FAILED,
+          progress: 100,
+          currentStep: 'Visibility scan failed',
+          errorMessage: 'AI analysis service is not configured.',
+          result: null,
+        },
+      });
+      return;
+    }
 
-        const prompt = `You are an expert Generative Engine Optimization (GEO) & AEO analyst for BrandRadar.
+    const google = createGoogleGenerativeAI({ apiKey: apiKey! });
+    await sleep(600);
+    await prisma.report.update({
+      where: { id: jobId },
+      data: {
+        status: ReportStatus.ANALYZING,
+        progress: 60,
+        currentStep: 'Checking ChatGPT and Gemini responses',
+      },
+    });
+
+    const prompt = `You are an expert Generative Engine Optimization (GEO) & AEO analyst for BrandRadar.
 Analyze the brand visibility of:
 - Brand: "${brand}"
 - Website: "${website}"
@@ -163,30 +186,13 @@ Analyze the brand visibility of:
 Evaluate how AI search engines (ChatGPT, Google Gemini) treat this brand.
 Determine realistic scores, citations, competitor share of voice, prompt opportunities, and concrete GEO recommendations.`;
 
-        const response = await generateText({
-          model: google('gemini-2.5-flash'),
-          prompt,
-          output: Output.object({ schema: visibilityReportSchema }),
-        });
+    const response = await generateText({
+      model: google('gemini-2.5-flash'),
+      prompt,
+      output: Output.object({ schema: visibilityReportSchema }),
+    });
 
-        result = response.output as VisibilityReportResult;
-      } catch (aiError) {
-        console.warn('Gemini direct query fallback to demo engine:', aiError);
-        result = generateDemoVisibilityReport(website, brand, topic);
-      }
-    } else {
-      await sleep(800);
-      await prisma.report.update({
-        where: { id: jobId },
-        data: {
-          status: ReportStatus.ANALYZING,
-          progress: 60,
-          currentStep: 'Synthesizing AEO landscape & citations',
-        },
-      });
-      await sleep(1000);
-      result = generateDemoVisibilityReport(website, brand, topic);
-    }
+    const result = response.output as VisibilityReportResult;
 
     await prisma.report.update({
       where: { id: jobId },
@@ -194,20 +200,31 @@ Determine realistic scores, citations, competitor share of voice, prompt opportu
         status: ReportStatus.COMPLETED,
         progress: 100,
         currentStep: 'Report ready',
+        provenance: 'AI_GENERATED',
         result: result as unknown as Prisma.InputJsonValue,
+        errorMessage: null,
         completedAt: new Date(),
       },
     });
   } catch (error) {
     console.error('Direct visibility scan failed:', error);
-    await prisma.report.update({
-      where: { id: jobId },
-      data: {
-        status: ReportStatus.FAILED,
-        currentStep: 'Visibility scan failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown scan error',
-      },
-    });
+    try {
+      await prisma.report.updateMany({
+        where: {
+          id: jobId,
+          status: { not: ReportStatus.COMPLETED },
+        },
+        data: {
+          status: ReportStatus.FAILED,
+          progress: 100,
+          currentStep: 'Visibility scan failed',
+          errorMessage: sanitizeScanErrorMessage(error),
+          result: null,
+        },
+      });
+    } catch (dbError) {
+      console.error('Failed to persist visibility scan failure:', dbError);
+    }
   }
 }
 
@@ -228,52 +245,49 @@ export async function runDirectKeywordScan(
     });
 
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    let result: KeywordReport;
 
-    if (apiKey && apiKey !== 'your_google_gemini_api_key' && !apiKey.includes('replace')) {
-      try {
-        const google = createGoogleGenerativeAI({ apiKey });
-        await sleep(600);
-        await prisma.report.update({
-          where: { id: jobId },
-          data: {
-            status: ReportStatus.ANALYZING,
-            progress: 65,
-            currentStep: 'Analysing research findings & competitor share',
-          },
-        });
+    if (!isConfiguredApiKey(apiKey)) {
+      await prisma.report.updateMany({
+        where: {
+          id: jobId,
+          status: { not: ReportStatus.COMPLETED },
+        },
+        data: {
+          status: ReportStatus.FAILED,
+          progress: 100,
+          currentStep: 'Keyword scan failed',
+          errorMessage: 'AI analysis service is not configured.',
+          result: null,
+        },
+      });
+      return;
+    }
 
-        const prompt = `You are an expert AEO & GEO keyword intelligence engine for BrandRadar.
+    const google = createGoogleGenerativeAI({ apiKey: apiKey! });
+    await sleep(600);
+    await prisma.report.update({
+      where: { id: jobId },
+      data: {
+        status: ReportStatus.ANALYZING,
+        progress: 65,
+        currentStep: 'Analysing research findings & competitor share',
+      },
+    });
+
+    const prompt = `You are an expert AEO & GEO keyword intelligence engine for BrandRadar.
 Analyze the target keyword:
 - Keyword: "${keyword}"
 - Target Country: "${country}"
 
 Evaluate citation patterns, top cited domains, competitor share of voice, evidence gaps, and prompt ideas.`;
 
-        const response = await generateText({
-          model: google('gemini-2.5-flash'),
-          prompt,
-          output: Output.object({ schema: keywordReportSchema }),
-        });
+    const response = await generateText({
+      model: google('gemini-2.5-flash'),
+      prompt,
+      output: Output.object({ schema: keywordReportSchema }),
+    });
 
-        result = response.output as KeywordReport;
-      } catch (aiError) {
-        console.warn('Gemini keyword analysis fallback to demo engine:', aiError);
-        result = generateDemoKeywordReport(keyword, country);
-      }
-    } else {
-      await sleep(800);
-      await prisma.report.update({
-        where: { id: jobId },
-        data: {
-          status: ReportStatus.ANALYZING,
-          progress: 65,
-          currentStep: 'Analysing research findings & competitor share',
-        },
-      });
-      await sleep(1000);
-      result = generateDemoKeywordReport(keyword, country);
-    }
+    const result = response.output as KeywordReport;
 
     await prisma.report.update({
       where: { id: jobId },
@@ -281,19 +295,30 @@ Evaluate citation patterns, top cited domains, competitor share of voice, eviden
         status: ReportStatus.COMPLETED,
         progress: 100,
         currentStep: 'Report ready',
+        provenance: 'AI_GENERATED',
         result: result as unknown as Prisma.InputJsonValue,
+        errorMessage: null,
         completedAt: new Date(),
       },
     });
   } catch (error) {
     console.error('Direct keyword scan failed:', error);
-    await prisma.report.update({
-      where: { id: jobId },
-      data: {
-        status: ReportStatus.FAILED,
-        currentStep: 'Keyword scan failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown keyword scan error',
-      },
-    });
+    try {
+      await prisma.report.updateMany({
+        where: {
+          id: jobId,
+          status: { not: ReportStatus.COMPLETED },
+        },
+        data: {
+          status: ReportStatus.FAILED,
+          progress: 100,
+          currentStep: 'Keyword scan failed',
+          errorMessage: sanitizeScanErrorMessage(error),
+          result: null,
+        },
+      });
+    } catch (dbError) {
+      console.error('Failed to persist keyword scan failure:', dbError);
+    }
   }
 }

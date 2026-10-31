@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { reconcileTerminalReport } from '@/lib/reports';
-import type { ReportListItem, ReportListStatus } from '@/types/reports';
+import type { ReportListItem, ReportListStatus, ReportProvenance } from '@/types/reports';
 
 export async function GET() {
   const user = await getSessionUser();
@@ -22,6 +22,7 @@ export async function GET() {
       id: true,
       type: true,
       status: true,
+      provenance: true,
       keyword: true,
       language: true,
       country: true,
@@ -48,6 +49,7 @@ export async function GET() {
       id: report.id,
       type: isKeywordReport ? 'keyword' : 'visibility',
       status: toReportListStatus(report.status),
+      provenance: parseReportProvenance(report.provenance),
       title: isKeywordReport
         ? report.keyword?.trim() || 'Untitled keyword report'
         : report.brand?.trim() ||
@@ -78,4 +80,11 @@ function toReportListStatus(status: string): ReportListStatus {
   if (status === 'COMPLETED') return 'completed';
   if (status === 'FAILED') return 'failed';
   return 'processing';
+}
+
+function parseReportProvenance(value: string | null | undefined): ReportProvenance {
+  if (value === 'LIVE') return 'LIVE';
+  if (value === 'AI_GENERATED') return 'AI_GENERATED';
+  if (value === 'DEMO') return 'DEMO';
+  return 'UNKNOWN';
 }

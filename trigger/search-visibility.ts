@@ -3,6 +3,7 @@ import { generateText, Output } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import prisma from '@/lib/prisma';
 import { ReportStatus } from '@/generated/prisma/client';
+import { sanitizeScanErrorMessage } from '@/lib/scan-errors';
 import { logger, metadata, schemaTask, wait } from '@trigger.dev/sdk';
 
 const google = createGoogleGenerativeAI({
@@ -237,6 +238,7 @@ export const searchVisibilityTask = schemaTask({
         status: ReportStatus.COMPLETED,
         progress: 100,
         currentStep: 'Report ready',
+        provenance: 'LIVE',
         result: report,
         errorMessage: null,
         completedAt: new Date(),
@@ -261,7 +263,7 @@ export const searchVisibilityTask = schemaTask({
     await markJobFailed(
       payload.jobId,
       'AI visibility scan failed',
-      error instanceof Error ? error.message : 'AI visibility scan failed',
+      sanitizeScanErrorMessage(error),
     );
   },
   onCancel: async ({ payload }) => {
@@ -547,6 +549,7 @@ async function markJobFailed(
       status: ReportStatus.FAILED,
       currentStep,
       errorMessage,
+      result: null,
     },
   });
 
