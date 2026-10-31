@@ -37,17 +37,19 @@ type DashboardUser = {
   image?: string | null;
 };
 
-export function DashboardNavbar({ user }: { user: DashboardUser }) {
+export function DashboardNavbar({ user }: { user?: DashboardUser | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const billing = useBilling();
   const { resolvedTheme, setTheme } = useTheme();
-  const initials = user.name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : 'BR';
 
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
@@ -57,7 +59,7 @@ export function DashboardNavbar({ user }: { user: DashboardUser }) {
       return;
     }
 
-    router.replace('/auth/sign-in');
+    router.replace('/');
     router.refresh();
   };
 

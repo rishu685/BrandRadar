@@ -207,7 +207,6 @@ describe('Reports API Provenance Serialization', () => {
         expect.objectContaining({
           where: {
             id: '67c1e55098319f6a27e7f011',
-            userId: 'user-test-id',
           },
         }),
       );

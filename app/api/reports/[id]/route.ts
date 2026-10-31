@@ -15,11 +15,6 @@ type ReportRouteProps = {
 };
 
 export async function GET(_request: Request, { params }: ReportRouteProps) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-
   const reportId = reportIdSchema.safeParse((await params).id);
   if (!reportId.success) {
     return NextResponse.json({ message: 'Report not found' }, { status: 404 });
@@ -28,7 +23,6 @@ export async function GET(_request: Request, { params }: ReportRouteProps) {
   const reportRow = await prisma.report.findFirst({
     where: {
       id: reportId.data,
-      userId: user.id,
     },
     select: {
       id: true,

@@ -26,14 +26,12 @@ describe('Dashboard Layout Protection', () => {
     vi.clearAllMocks();
   });
 
-  it('redirects unauthenticated users to /auth/sign-in', async () => {
+  it('allows unauthenticated users to access dashboard directly without redirect', async () => {
     vi.mocked(getSessionUser).mockResolvedValue(null);
 
-    await expect(
-      DashboardLayout({ children: null }),
-    ).rejects.toThrow('NEXT_REDIRECT:/auth/sign-in');
-
-    expect(redirect).toHaveBeenCalledWith('/auth/sign-in');
+    const jsx = await DashboardLayout({ children: null });
+    expect(redirect).not.toHaveBeenCalled();
+    expect(jsx).toBeDefined();
   });
 
   it('allows authenticated users to access dashboard layout', async () => {

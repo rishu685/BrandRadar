@@ -763,8 +763,7 @@ export default function Home() {
               </p>
               <div data-hero-reveal className='mt-9 flex flex-wrap gap-3'>
                 <Button
-                  render={<Link href='/auth/sign-up' />}
-                  nativeButton={false}
+                  render={<Link href='/ai-search-visibility' />}
                   size='lg'
                   className='group/hero-primary h-13 gap-4 rounded-[9px] border-primary-foreground bg-primary-foreground py-1.5 pr-1.5 pl-5 text-sm font-bold tracking-normal text-primary normal-case shadow-[0_10px_30px_rgba(0,0,0,0.18)] transition-[transform,box-shadow,background-color] duration-300 ease-out hover:-translate-y-0.5 hover:bg-primary-foreground hover:shadow-[0_14px_36px_rgba(0,0,0,0.24)] active:translate-y-px'
                 >
@@ -882,7 +881,7 @@ export default function Home() {
                           {product.description}
                         </p>
                         <Link
-                          href='/auth/sign-up'
+                          href='/ai-search-visibility'
                           className='mt-5 inline-flex min-h-11 items-center gap-2 font-semibold text-primary hover:underline'
                         >
                           {product.action}
@@ -921,7 +920,7 @@ export default function Home() {
             >
               <Link
                 data-stack-card
-                href='/auth/sign-up'
+                href='/ai-keyword'
                 className='group overflow-hidden rounded-[14px] border border-white/10 bg-primary p-6 text-primary-foreground focus-visible:ring-2 focus-visible:ring-background lg:col-span-7 lg:row-span-2 sm:p-9'
               >
                 <div className='flex items-start justify-between gap-8'>
@@ -943,7 +942,7 @@ export default function Home() {
               </Link>
               <Link
                 data-stack-card
-                href='/auth/sign-up'
+                href='/ai-search-visibility'
                 className='group overflow-hidden rounded-[14px] border border-white/10 bg-white/5 p-6 focus-visible:ring-2 focus-visible:ring-background lg:col-span-5 sm:p-8'
               >
                 <BotIcon className='size-5 text-primary' />
@@ -956,7 +955,7 @@ export default function Home() {
               </Link>
               <Link
                 data-stack-card
-                href='/auth/sign-up'
+                href='/reports'
                 className='group flex min-h-64 rounded-[14px] border border-white/10 bg-background p-6 text-foreground focus-visible:ring-2 focus-visible:ring-background lg:col-span-5 sm:p-8'
               >
                 <div className='flex w-full flex-col justify-between'>
@@ -1126,12 +1125,10 @@ export default function Home() {
               Stay discoverable—in search, AI, and beyond.
             </h2>
             <p className='mt-7 max-w-2xl text-lg leading-8 text-primary-foreground/70'>
-              Create an account and run your first focused keyword or visibility
-              report.
+              Run your first focused keyword or visibility report immediately.
             </p>
             <Button
-              render={<Link href='/auth/sign-up' />}
-              nativeButton={false}
+              render={<Link href='/ai-search-visibility' />}
               size='lg'
               className='mt-9 h-12 rounded-[10px] bg-primary-foreground px-6 text-primary hover:bg-primary-foreground/90 active:translate-y-px'
             >

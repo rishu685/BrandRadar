@@ -101,9 +101,9 @@ export function Header() {
                 ? 'rounded-[11px] text-white hover:bg-white/10 hover:text-white'
                 : undefined
             }
-            render={<Link href='/auth/sign-in' />}
+            render={<Link href='/ai-keyword' />}
           >
-            Sign in
+            AI Keywords
           </Button>
           <Button
             className={
@@ -111,9 +111,9 @@ export function Header() {
                 ? 'rounded-[11px] border border-white bg-white px-5 text-[#0A0A0A] shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white'
                 : 'bg-linear-to-r from-primary to-brand-accent text-primary-foreground hover:opacity-90'
             }
-            render={<Link href='/auth/sign-up' />}
+            render={<Link href='/ai-search-visibility' />}
           >
-            Get started
+            Launch Radar
           </Button>
         </div>
       </div>

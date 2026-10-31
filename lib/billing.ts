@@ -4,21 +4,21 @@ import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { PLAN_LIMITS, type BillingPlan, type UsageFeature } from '@/lib/plans';
 
-export async function getBillingStatus(userId: string) {
+export async function getBillingStatus(userId?: string | null) {
   const plan: BillingPlan = 'pro';
   const limits = PLAN_LIMITS[plan];
 
   const [keywordSearches, visibilityScans] = await Promise.all([
     prisma.report.count({
       where: {
-        userId,
         type: ReportType.KEYWORD,
+        ...(userId ? { userId } : {}),
       },
     }),
     prisma.report.count({
       where: {
-        userId,
         type: ReportType.VISIBILITY,
+        ...(userId ? { userId } : {}),
       },
     }),
   ]);
@@ -44,13 +44,10 @@ export async function getBillingStatus(userId: string) {
 
 export async function getCurrentBillingStatus() {
   const user = await getSessionUser();
-  if (!user) {
-    return null;
-  }
-  return getBillingStatus(user.id);
+  return getBillingStatus(user?.id);
 }
 
-export async function checkUsageLimit(userId: string, _feature: UsageFeature) {
+export async function checkUsageLimit(userId?: string | null, _feature?: UsageFeature) {
   const billing = await getBillingStatus(userId);
   return {
     allowed: true, // Unlimited usage for free open-source users

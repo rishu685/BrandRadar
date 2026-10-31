@@ -19,9 +19,6 @@ const keywordResearchInputSchema = z.object({
 
 export async function POST(request: Request) {
   const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
 
   const requestBody = await request.json().catch(() => null);
   const input = keywordResearchInputSchema.safeParse(requestBody);
@@ -36,11 +33,11 @@ export async function POST(request: Request) {
     );
   }
 
-  await checkUsageLimit(user.id, 'keywordSearches');
+  await checkUsageLimit(user?.id, 'keywordSearches');
 
   const report = await prisma.report.create({
     data: {
-      userId: user.id,
+      userId: user?.id ?? null,
       type: 'KEYWORD',
       status: ReportStatus.PENDING,
       progress: 5,
@@ -70,7 +67,7 @@ export async function POST(request: Request) {
           country: input.data.country,
         },
         {
-          tags: [`report:${report.id}`, `user:${user.id}`],
+          tags: [`report:${report.id}`, user ? `user:${user.id}` : 'guest'],
         },
       );
 

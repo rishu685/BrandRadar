@@ -6,14 +6,9 @@ import type { ReportListItem, ReportListStatus, ReportProvenance } from '@/types
 
 export async function GET() {
   const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
 
   const reportRows = await prisma.report.findMany({
-    where: {
-      userId: user.id,
-    },
+    where: user ? { userId: user.id } : undefined,
     orderBy: {
       createdAt: 'desc',
     },

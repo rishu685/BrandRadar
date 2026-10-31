@@ -11,9 +11,6 @@ import { runDirectVisibilityScan } from '@/lib/engine/direct-scanner';
 
 export async function POST(request: Request) {
   const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
 
   const requestBody = await request.json().catch(() => null);
   const input = visibilitySearchSchema.safeParse(requestBody);
@@ -27,11 +24,11 @@ export async function POST(request: Request) {
     );
   }
 
-  await checkUsageLimit(user.id, 'visibilityScans');
+  await checkUsageLimit(user?.id, 'visibilityScans');
 
   const report = await prisma.report.create({
     data: {
-      userId: user.id,
+      userId: user?.id ?? null,
       type: 'VISIBILITY',
       status: ReportStatus.PENDING,
       progress: 5,
@@ -63,7 +60,7 @@ export async function POST(request: Request) {
           topic: input.data.topic,
         },
         {
-          tags: [`report:${report.id}`, `user:${user.id}`],
+          tags: [`report:${report.id}`, user ? `user:${user.id}` : 'guest'],
         },
       );
 

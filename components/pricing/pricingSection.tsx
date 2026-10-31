@@ -98,17 +98,15 @@ export function PricingSection({
               <Button
                 size='lg'
                 className='w-full border-0 bg-linear-to-r from-primary to-primary/80 text-primary-foreground hover:opacity-90'
-                render={<Link href='/auth/sign-up' />}
-                nativeButton={false}
+                render={<Link href='/ai-search-visibility' />}
               >
-                Get Started for Free
+                Launch Search Visibility
               </Button>
             ) : (
               <Button
                 size='lg'
                 className='w-full'
                 render={<Link href='/ai-keyword' />}
-                nativeButton={false}
               >
                 Launch Research Dashboard
               </Button>
