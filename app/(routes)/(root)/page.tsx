@@ -763,8 +763,8 @@ export default function Home() {
               </p>
               <div data-hero-reveal className='mt-9 flex flex-wrap gap-3'>
                 <Button
-                  render={<Link href='/auth/sign-up' />}
                   nativeButton={false}
+                  render={<Link href='/auth/sign-up' />}
                   size='lg'
                   className='group/hero-primary h-13 gap-4 rounded-[9px] border-primary-foreground bg-primary-foreground py-1.5 pr-1.5 pl-5 text-sm font-bold tracking-normal text-primary normal-case shadow-[0_10px_30px_rgba(0,0,0,0.18)] transition-[transform,box-shadow,background-color] duration-300 ease-out hover:-translate-y-0.5 hover:bg-primary-foreground hover:shadow-[0_14px_36px_rgba(0,0,0,0.24)] active:translate-y-px'
                 >
@@ -774,8 +774,8 @@ export default function Home() {
                   </span>
                 </Button>
                 <Button
-                  render={<Link href='#products' />}
                   nativeButton={false}
+                  render={<Link href='#products' />}
                   size='lg'
                   variant='outline'
                   className='group/hero-secondary h-13 gap-2 rounded-[9px] border-primary-foreground/35 bg-foreground/10 px-5 text-sm font-semibold tracking-normal text-primary-foreground normal-case backdrop-blur-sm transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-primary-foreground/55 hover:bg-primary-foreground/10 hover:text-primary-foreground active:translate-y-px'
@@ -1130,8 +1130,8 @@ export default function Home() {
               report.
             </p>
             <Button
-              render={<Link href='/auth/sign-up' />}
               nativeButton={false}
+              render={<Link href='/auth/sign-up' />}
               size='lg'
               className='mt-9 h-12 rounded-[10px] bg-primary-foreground px-6 text-primary hover:bg-primary-foreground/90 active:translate-y-px'
             >

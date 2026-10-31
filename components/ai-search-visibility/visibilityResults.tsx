@@ -356,8 +356,8 @@ export function VisibilityResults({ report, search }: VisibilityResultsProps) {
                 size='sm'
                 variant='outline'
                 className='h-8 text-xs border-neutral-700 bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
-                render={<Link href='/llms-txt' />}
                 nativeButton={false}
+                render={<Link href='/llms-txt' />}
               >
                 <FileCodeIcon className='mr-1.5 size-3.5 text-sky-400' />
                 Generate /llms.txt
@@ -366,8 +366,8 @@ export function VisibilityResults({ report, search }: VisibilityResultsProps) {
                 size='sm'
                 variant='outline'
                 className='h-8 text-xs border-neutral-700 bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
-                render={<Link href='/crawler-audit' />}
                 nativeButton={false}
+                render={<Link href='/crawler-audit' />}
               >
                 <BotIcon className='mr-1.5 size-3.5 text-amber-400' />
                 Audit AI Crawlers
