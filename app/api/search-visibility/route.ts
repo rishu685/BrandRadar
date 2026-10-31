@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { tasks } from '@trigger.dev/sdk';
-import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { ReportStatus } from '@/generated/prisma/client';
 import { visibilitySearchSchema } from '@/lib/search-visibility-schema';
@@ -11,7 +10,10 @@ import { checkUsageLimit } from '@/lib/billing';
 import { runDirectVisibilityScan } from '@/lib/engine/direct-scanner';
 
 export async function POST(request: Request) {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
 
   const requestBody = await request.json().catch(() => null);
   const input = visibilitySearchSchema.safeParse(requestBody);

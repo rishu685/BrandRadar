@@ -1,12 +1,17 @@
+import { redirect } from 'next/navigation';
 import { DashboardNavbar } from '@/components/dashboardNavbar';
-import { getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 
 async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+
+  if (!user) {
+    redirect('/auth/sign-in');
+  }
 
   return (
     <div className='flex min-h-svh flex-col bg-background'>

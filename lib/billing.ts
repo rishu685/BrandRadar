@@ -1,7 +1,6 @@
 import 'server-only';
-import { headers } from 'next/headers';
 import { ReportType } from '@/generated/prisma/client';
-import { auth, getEffectiveUser } from '@/lib/auth';
+import { getSessionUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { PLAN_LIMITS, type BillingPlan, type UsageFeature } from '@/lib/plans';
 
@@ -44,11 +43,14 @@ export async function getBillingStatus(userId: string) {
 }
 
 export async function getCurrentBillingStatus() {
-  const user = await getEffectiveUser();
+  const user = await getSessionUser();
+  if (!user) {
+    return null;
+  }
   return getBillingStatus(user.id);
 }
 
-export async function checkUsageLimit(userId: string, feature: UsageFeature) {
+export async function checkUsageLimit(userId: string, _feature: UsageFeature) {
   const billing = await getBillingStatus(userId);
   return {
     allowed: true, // Unlimited usage for free open-source users
