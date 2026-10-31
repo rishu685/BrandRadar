@@ -98,8 +98,8 @@ export function PricingSection({
               <Button
                 size='lg'
                 className='w-full border-0 bg-linear-to-r from-primary to-primary/80 text-primary-foreground hover:opacity-90'
-                render={<Link href='/auth/sign-up' />}
                 nativeButton={false}
+                render={<Link href='/auth/sign-up' />}
               >
                 Get Started for Free
               </Button>
@@ -107,8 +107,8 @@ export function PricingSection({
               <Button
                 size='lg'
                 className='w-full'
-                render={<Link href='/ai-keyword' />}
                 nativeButton={false}
+                render={<Link href='/ai-keyword' />}
               >
                 Launch Research Dashboard
               </Button>
@@ -141,8 +141,8 @@ export function ManageBillingButton() {
     <Button
       type='button'
       variant='outline'
-      render={<Link href='/billing' />}
       nativeButton={false}
+      render={<Link href='/billing' />}
     >
       <ShieldCheckIcon className='mr-2 size-4 text-emerald-500' />
       Open Source Edition

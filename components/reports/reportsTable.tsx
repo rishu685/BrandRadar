@@ -237,8 +237,8 @@ function ReportRow({ report }: { report: ReportListItem }) {
         <Button
           variant='ghost'
           size='sm'
-          render={<Link href={`/reports/${report.id}`} />}
           nativeButton={false}
+          render={<Link href={`/reports/${report.id}`} />}
           className='tracking-normal'
         >
           <EyeIcon data-icon='inline-start' />
