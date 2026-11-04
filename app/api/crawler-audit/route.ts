@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
 
 const auditInputSchema = z.object({
   url: z.string().url(),

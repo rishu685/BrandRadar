@@ -41,7 +41,6 @@ vi.mock('@/lib/reports', () => ({
 
 import { getSessionUser, type AuthUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { tasks } from '@trigger.dev/sdk';
 import { runDirectKeywordScan, runDirectVisibilityScan } from '@/lib/engine/direct-scanner';
 
 import { GET as getReports } from '@/app/api/reports/route';

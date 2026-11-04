@@ -1,9 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { GaugeIcon, LogOutIcon, MenuIcon, MoonIcon, StarIcon } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { GaugeIcon, MenuIcon, MoonIcon, StarIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { toast } from 'sonner';
 import { Logo } from '@/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -19,8 +17,6 @@ import {
 import { Badge } from './ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-import { authClient } from '@/lib/auth-client';
-import { useBilling } from '@/hooks/use-billing';
 
 const navigationItems = [
   { title: 'AI Search Visibility', href: '/ai-search-visibility' },
@@ -39,8 +35,6 @@ type DashboardUser = {
 
 export function DashboardNavbar({ user }: { user?: DashboardUser | null }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const billing = useBilling();
   const { resolvedTheme, setTheme } = useTheme();
   const initials = user?.name
     ? user.name
@@ -50,18 +44,6 @@ export function DashboardNavbar({ user }: { user?: DashboardUser | null }) {
         .slice(0, 2)
         .toUpperCase()
     : 'BR';
-
-  const handleSignOut = async () => {
-    const { error } = await authClient.signOut();
-
-    if (error) {
-      toast.error(error.message || 'We could not sign you out.');
-      return;
-    }
-
-    router.replace('/');
-    router.refresh();
-  };
 
   return (
     <header className='sticky top-0 z-40 border-b bg-background/95 backdrop-blur'>
@@ -170,7 +152,7 @@ export function DashboardNavbar({ user }: { user?: DashboardUser | null }) {
               <Avatar className='size-9 border'>
                 <AvatarImage src='/brand-logo.png' alt='BrandRadar' />
                 <AvatarFallback className='bg-primary/10 text-xs font-bold text-primary'>
-                  BR
+                  {initials}
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>

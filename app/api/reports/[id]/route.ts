@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { auth as triggerAuth } from '@trigger.dev/sdk';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { getSessionUser } from '@/lib/auth';
 import { reconcileTerminalReport } from '@/lib/reports';
 import type { KeywordReport } from '@/lib/keyword-report';
 import type { ReportDetailResponse, ReportProvenance } from '@/types/reports';

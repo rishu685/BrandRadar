@@ -1,6 +1,5 @@
 'use client';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { Globe2Icon, SearchIcon, SparklesIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -77,7 +76,7 @@ export function KeywordSearchRow({
   isSearching,
   onSearch,
   remaining,
-  isPaid = false,
+  isPaid: _isPaid = false,
 }: KeywordSearchRowProps) {
   const [keyword, setKeyword] = useState('');
   const usageExhausted = remaining === 0;

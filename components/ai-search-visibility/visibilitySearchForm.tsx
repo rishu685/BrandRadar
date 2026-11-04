@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheckIcon, SearchIcon, SparklesIcon } from 'lucide-react';
@@ -30,7 +29,7 @@ export function VisibilitySearchForm({
   isSearching = false,
   onSearch,
   remaining,
-  isPaid = false,
+  isPaid: _isPaid = false,
 }: VisibilitySearchFormProps) {
   const [platformIndex, setPlatformIndex] = useState(0);
   const usageExhausted = remaining === 0;

@@ -242,14 +242,17 @@ export const keywordResearchTask = schemaTask({
       currentStep: 'Reviewing cited sources',
     });
 
-    const rawDeliveryData = await wait.forToken<any>(callbackToken).unwrap();
+    const rawDeliveryData = (await wait.forToken<Record<string, unknown> | unknown[]>(callbackToken).unwrap()) as
+      | Record<string, unknown>
+      | unknown[]
+      | null;
 
     const researchRecords = Array.isArray(rawDeliveryData)
       ? rawDeliveryData
-      : Array.isArray(rawDeliveryData?.data)
-        ? rawDeliveryData.data
-        : Array.isArray(rawDeliveryData?.response)
-          ? rawDeliveryData.response
+      : rawDeliveryData && typeof rawDeliveryData === 'object' && Array.isArray((rawDeliveryData as Record<string, unknown>).data)
+        ? ((rawDeliveryData as Record<string, unknown>).data as unknown[])
+        : rawDeliveryData && typeof rawDeliveryData === 'object' && Array.isArray((rawDeliveryData as Record<string, unknown>).response)
+          ? ((rawDeliveryData as Record<string, unknown>).response as unknown[])
           : [];
 
     if (!Array.isArray(researchRecords) || researchRecords.length === 0) {

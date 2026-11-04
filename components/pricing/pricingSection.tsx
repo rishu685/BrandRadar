@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { BillingPlan } from '@/lib/plans';
-import { cn } from '@/lib/utils';
 
 type PricingSectionProps = {
   context?: 'public' | 'billing';

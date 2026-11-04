@@ -8,7 +8,6 @@ import {
   CopyIcon,
   CheckIcon,
   ExternalLinkIcon,
-  SparklesIcon,
   TerminalIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';

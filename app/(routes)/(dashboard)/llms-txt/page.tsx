@@ -9,7 +9,6 @@ import {
   SparklesIcon,
   CheckCircle2Icon,
   AlertTriangleIcon,
-  ExternalLinkIcon,
   FileTextIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';

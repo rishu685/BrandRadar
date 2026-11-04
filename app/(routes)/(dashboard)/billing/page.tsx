@@ -1,4 +1,4 @@
-import { SparklesIcon, ShieldCheckIcon, CpuIcon, CheckCircle2Icon } from 'lucide-react';
+import { ShieldCheckIcon, CpuIcon, CheckCircle2Icon } from 'lucide-react';
 import {
   Card,
   CardContent,
