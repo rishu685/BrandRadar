@@ -1,0 +1,13 @@
+# BrandRadar
+
+> Official repository and documentation index for rishu685/BrandRadar.
+
+## Core Resources
+
+- [GitHub Repository](https://github.com/rishu685/BrandRadar): Source code, documentation, and issue tracker.
+- [Website](https://brandradar-alpha.vercel.app): Official website and documentation.
+
+## AI Agent & LLM Indexing
+
+- Structured following the standard /llms.txt specification for AI search engines and coding assistants.
+- Validated via [AccessGuard AI-Readiness Suite](https://ronanchnlps-bit.github.io/).
